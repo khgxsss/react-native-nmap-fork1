@@ -1,11 +1,11 @@
 {
   "name": "react-native-nmap-fork1",
-  "version": "0.1.0",
+  "version": "0.1.3",
   "description": "UPDATED react-native bridge for naver map",
   "main": "index.js",
   "author": "doodoo13",
   "license": "MIT",
-  "homepage": "https://www.npmjs.com/package/react-native-nmap-fork1",
+  "homepage": "https://github.com/khgxsss/react-native-nmap-fork1",
   "scripts": {
     "start": "react-native start",
     "test": "jest",
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/quadflask/react-native-naver-map"
+    "url": "https://github.com/khgxsss/react-native-nmap-fork1"
   },
   "keywords": [
     "react-native",

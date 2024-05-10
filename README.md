@@ -1,7 +1,11 @@
-react-native-naver-map [![npm version](https://badge.fury.io/js/react-native-nmap.svg)](https://badge.fury.io/js/react-native-nmap)
+react-native naver map [![npm version](https://badge.fury.io/js/react-native-nmap-fork1.svg)](https://badge.fury.io/js/react-native-nmap-fork1)
 -----
 
-네이버맵의 리액트 네이티브 브릿지입니다.
+네이버맵의 리액트 네이티브 브릿지입니다. 
+
+유지보수가 안되어 개인적으로 수정해서 쓰고 있습니다. fork by doodoo13
+
+원본 : https://github.com/QuadFlask/react-native-naver-map
 
 ![](https://raw.githubusercontent.com/QuadFlask/react-native-naver-map/master/example/screenshot/screenshot.png)
 
@@ -40,7 +44,7 @@ $ cd ios/ && pod install
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         // 네이버 지도 저장소
         maven {
             url 'https://naver.jfrog.io/artifactory/maven/'
@@ -49,7 +53,7 @@ allprojects {
 }
 ```
 
-`/android/app/src/AndroidManifest.xml`에 아래와 같이 추가하고 발급받은 클라이언트 아이디로 바꿔줍니다.
+`/android/app/src/main/AndroidManifest.xml`에 아래와 같이 추가하고 발급받은 클라이언트 아이디로 바꿔줍니다.
 ```xml
 <manifest>
     <application>
@@ -83,30 +87,31 @@ allprojects {
 
 ## 예제
 
-> [example/App.js](https://github.com/QuadFlask/react-native-naver-map/blob/master/example/App.js) 
+> code block
 
 ```tsx
-import NaverMapView, {Circle, Marker, Path, Polyline, Polygon} from "react-native-nmap-fork1";
+import NaverMapView, { Coord, Marker, NaverMapViewInstance, Polyline } from 'react-native-nmap-fork1';
 
-function MyMap() {
-    const P0 = {latitude: 37.564362, longitude: 126.977011};
-    const P1 = {latitude: 37.565051, longitude: 126.978567};
-    const P2 = {latitude: 37.565383, longitude: 126.976292};
-
-    return <NaverMapView style={{width: '100%', height: '100%'}}
-                         showsMyLocationButton={true}
-                         center={{...P0, zoom: 16}}
-                         onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-                         onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-                         onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
-        <Marker coordinate={P0} onClick={() => console.warn('onClick! p0')}/>
-        <Marker coordinate={P1} pinColor="blue" onClick={() => console.warn('onClick! p1')}/>
-        <Marker coordinate={P2} pinColor="red" onClick={() => console.warn('onClick! p2')}/>
-        <Path coordinates={[P0, P1]} onClick={() => console.warn('onClick! path')} width={10}/>
-        <Polyline coordinates={[P1, P2]} onClick={() => console.warn('onClick! polyline')}/>
-        <Circle coordinate={P0} color={"rgba(255,0,0,0.3)"} radius={200} onClick={() => console.warn('onClick! circle')}/>
-        <Polygon coordinates={[P0, P1, P2]} color={`rgba(0, 0, 0, 0.5)`} onClick={() => console.warn('onClick! polygon')}/>
-    </NaverMapView>
+return (
+        <NaverMapView 
+            showsMyLocationButton={false}
+            compass={true}
+            scaleBar={true}
+            nightMode={false}
+            zoomControl={true}
+            // logoMargin={{left: 50}} 네이버 맵 정책으로 반드시 보여야 함
+            mapType={mapType}
+            style={{ height:"100%" }}
+            center={locationSaved ? {latitude: locationSaved.latitude, longitude:locationSaved.longitude, zoom: locationSaved.mapZoomLevel}:{latitude: 37.35882350130591, longitude: 127.10469231924353, zoom: 13}}
+            onCameraChange={handleOnCameraChange}
+            onTouch={handleOnTouch}
+            ref={mapView}
+        >
+            {userMarker}
+            {deviceMarkers}
+            {seeDistanceLines && distanceLines}
+        </NaverMapView>
+)
 }
 ```
 
@@ -152,6 +157,8 @@ interface NaverMapViewProps {
         latitude: number;
         longitude: number;
         zoom: number;
+        contentRegion: [Coord, Coord, Coord, Coord, Coord]; // https://navermaps.github.io/android-map-sdk/reference/com/naver/maps/map/NaverMap.html#getContentRegion()
+        coveringRegion: [Coord, Coord, Coord, Coord, Coord];
     }) => void;
     onMapClick?: (event: {
         x: number;
@@ -363,3 +370,5 @@ position => {
 - *react-navigation*의 스택 스크린 사용시 안드로이드에서 맵뷰가 겹쳐 보이는 현상이 있을 경우 `useTextureView` 옵션을 추가해 주세요. [#27](https://github.com/QuadFlask/react-native-naver-map/issues/27)
 
 - 안드로이드에서 `ScrollView` 내부에 추가할 경우 `scrollGesturesEnabled`를 이용해 맵 스크롤을 제어할 수 있습니다. [#62](https://github.com/QuadFlask/react-native-naver-map/issues/62)
+
+- 마커 클러스터링에 필요한 지도 컨텐츠 영역은 `onCameraChange` 이벤트를 통해 얻을 수 있습니다. [#64](https://github.com/QuadFlask/react-native-naver-map/issues/64)
